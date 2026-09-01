@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from mcp_cfdi_mx.models import Pago, PagoDoctoRelacionado, Pagos20
+from mcp_cfdi_mx.models import Pago, PagoDoctoRelacionado, Pagos20, Totales
 
 
 @pytest.fixture()
@@ -32,15 +32,24 @@ def pago(docto_relacionado: PagoDoctoRelacionado) -> Pago:
     )
 
 
+@pytest.fixture()
+def totales() -> Totales:
+    return Totales(monto_total_pagos="100.00")
+
+
 class TestPagos20:
-    def test_builds_valid_pagos20(self, pago: Pago) -> None:
-        complemento = Pagos20(pagos=[pago])
+    def test_builds_valid_pagos20(self, pago: Pago, totales: Totales) -> None:
+        complemento = Pagos20(pagos=[pago], totales=totales)
         assert complemento.version == "2.0"
         assert len(complemento.pagos) == 1
 
-    def test_requires_at_least_one_pago(self) -> None:
+    def test_requires_at_least_one_pago(self, totales: Totales) -> None:
         with pytest.raises(ValidationError):
-            Pagos20(pagos=[])
+            Pagos20(pagos=[], totales=totales)
+
+    def test_totales_is_required(self, pago: Pago) -> None:
+        with pytest.raises(ValidationError):
+            Pagos20(pagos=[pago])  # type: ignore[call-arg]
 
     def test_pago_requires_at_least_one_docto_relacionado(self) -> None:
         with pytest.raises(ValidationError):
@@ -52,7 +61,7 @@ class TestPagos20:
                 doctos_relacionados=[],
             )
 
-    def test_version_is_frozen(self, pago: Pago) -> None:
-        complemento = Pagos20(pagos=[pago])
+    def test_version_is_frozen(self, pago: Pago, totales: Totales) -> None:
+        complemento = Pagos20(pagos=[pago], totales=totales)
         with pytest.raises(ValidationError):
             complemento.version = "1.0"

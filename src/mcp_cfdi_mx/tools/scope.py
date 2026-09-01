@@ -19,10 +19,10 @@ def mx__get_supported_scope() -> ScopeInfo:
 
     Reflects Phase 1 scope locked in context-library/countries/mx.md
     (workspace root repo): CFDI 4.0 Ingreso + Egreso + Complemento de Pagos
-    2.0, PAC-agnostic sealing. Model generation for these document types is
-    implemented (`mcp_cfdi_mx.models`); XSD validation, sealing, and TFD
-    verification tools are tracked as the next build phase in
-    roadmap-2026.md, not yet implemented.
+    2.0, PAC-agnostic sealing. Build (`mx__build_cfdi`/`mx__build_pago`),
+    XSD validation (`mx__validate_cfdi`), sealing (`mx__seal_cfdi`), and TFD
+    verification (`mx__verify_tfd`) are all implemented. PAC submission
+    transport and later-phase complementos are not — see roadmap-2026.md.
 
     Returns:
         A `ScopeInfo` describing current scope, for callers to check before

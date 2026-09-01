@@ -10,18 +10,22 @@ Exit codes:
     1  Warnings only (non-blocking)
     2  Blocking failures found
 
-Scaffold status (2026-09-01)
------------------------------
+Build status (2026-09-01)
+--------------------------
 The invoice-tree pathway is resolved (``_IS_EN16931_FAMILY = False``,
 ``CFDIComprobante``), so CHECK 1 (core interface coverage) runs for real.
-Models (``CFDIComprobante``, ``MXEmisor``, ``MXReceptor``, ``CFDIConcepto``,
-``Pagos20``) and RFC validation exist; MCP-exposed generate/validate/seal
-tools do not yet — only ``mx__get_supported_scope`` is implemented. Several
-core symbols (notably ``SelloDigitalSigner`` and the Schematron/XSD
-validator classes) are therefore genuinely unused so far and reported as
-WARNING-level [MISSING], not overridden — they are real future work, not a
-deliberate design choice, so they should not be silenced with an
-``OVERRIDE-REASON``. See roadmap-2026.md for the tracked next build phase.
+Phase 1 is fully implemented: ``mx__build_cfdi``, ``mx__build_pago``,
+``mx__validate_cfdi``, ``mx__seal_cfdi``, ``mx__verify_tfd``, and
+``mx__get_supported_scope`` are all live tools. Sealing routes through
+core's ``SelloDigitalSigner``; XSD validation subclasses core's
+``BaseXSDValidator`` (a resolver-aware compilation, needed for SAT's
+absolute-URL schema imports — see ``utils/xsd_validator.py``). Remaining
+[MISSING] warnings below are core symbols genuinely unused by this
+package's current scope (e.g. Peppol, PDF, OAuth2/mTLS http_client
+machinery — CFDI has no Peppol or PDF/A-3 leg, and no external
+authenticated HTTP client yet) — real future-scope gaps, not overridden.
+See roadmap-2026.md for what remains (PAC transport, later-phase
+complementos, catalogue cross-validation design decision).
 """
 
 from __future__ import annotations
@@ -64,6 +68,15 @@ _MODULES: list[str] = [
     f"{_MODULE}.models.invoice",
     f"{_MODULE}.models.pagos",
     f"{_MODULE}.tools.scope",
+    f"{_MODULE}.tools.build",
+    f"{_MODULE}.tools.build_pago",
+    f"{_MODULE}.tools.validate",
+    f"{_MODULE}.tools.seal",
+    f"{_MODULE}.tools.verify_tfd",
+    f"{_MODULE}.utils.xml_builder",
+    f"{_MODULE}.utils.pagos_builder",
+    f"{_MODULE}.utils.xsd_validator",
+    f"{_MODULE}.utils.tfd",
 ]
 
 _INTENTIONAL_OVERRIDES: dict[str, set[str]] = {

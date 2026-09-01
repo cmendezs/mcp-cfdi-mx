@@ -106,6 +106,29 @@ class MXReceptor(InvoiceParty):
         return v
 
 
+class ConceptoImpuesto(BaseModel):
+    """One `Concepto/Impuestos/(Traslados/Traslado | Retenciones/Retencion)` entry.
+
+    `impuesto`: `catCFDI:c_Impuesto` — `"001"`=ISR, `"002"`=IVA, `"003"`=IEPS
+    (XSD-confirmed 3-digit zero-padded codes; do not use the bare `1`/`2`/`3`
+    shown in the catálogos workbook's display column).
+    `tipo_factor`: `catCFDI:c_TipoFactor` — `"Tasa"` \\| `"Cuota"` \\| `"Exento"`.
+    `tasa_o_cuota`/`importe` are required when `tipo_factor` is `"Tasa"` or
+    `"Cuota"`, and must be absent when `"Exento"` — enforced by the XML
+    builder, not by this model (the model stays a plain data container).
+    """
+
+    base: str = Field(..., description="Base para el cálculo del impuesto")
+    impuesto: str = Field(..., description="Clave del catálogo c_Impuesto")
+    tipo_factor: str = Field(..., description="Clave del catálogo c_TipoFactor")
+    tasa_o_cuota: str | None = Field(
+        default=None, description="Requerido cuando TipoFactor es 'Tasa' o 'Cuota'"
+    )
+    importe: str | None = Field(
+        default=None, description="Requerido cuando TipoFactor es 'Tasa' o 'Cuota'"
+    )
+
+
 class CFDIConcepto(InvoiceLineItem):
     """Concepto (line item), Grupo `Conceptos/Concepto`.
 
@@ -120,6 +143,12 @@ class CFDIConcepto(InvoiceLineItem):
     objeto_imp: str = Field(
         ...,
         description="Clave que expresa si el concepto es objeto de impuesto (catálogo c_ObjetoImp)",
+    )
+    traslados: list[ConceptoImpuesto] = Field(
+        default_factory=list, description="Impuestos trasladados aplicables a este concepto"
+    )
+    retenciones: list[ConceptoImpuesto] = Field(
+        default_factory=list, description="Impuestos retenidos aplicables a este concepto"
     )
 
 

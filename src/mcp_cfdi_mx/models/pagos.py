@@ -28,6 +28,25 @@ class ImpuestoDR(BaseModel):
     )
 
 
+class ImpuestoP(BaseModel):
+    """One entry of `Pago/ImpuestosP/(TrasladosP|RetencionesP)` — tax on the payment itself.
+
+    Distinct from `ImpuestoDR` (different attribute names: `BaseP`/
+    `ImpuestoP`/... vs `BaseDR`/`ImpuestoDR`/...) — the XSD does not share
+    a single complex type between the two despite the structural symmetry.
+    """
+
+    base_p: str | None = Field(default=None, description="BaseP — solo aplica a TrasladoP")
+    impuesto_p: str = Field(..., description="ImpuestoP — clave del catálogo c_Impuesto")
+    tipo_factor_p: str | None = Field(
+        default=None, description="TipoFactorP — solo aplica a TrasladoP"
+    )
+    tasa_o_cuota_p: str | None = Field(
+        default=None, description="TasaOCuotaP — opcional, solo aplica a TrasladoP"
+    )
+    importe_p: str = Field(..., description="ImporteP")
+
+
 class PagoDoctoRelacionado(BaseModel):
     """`Pago/DoctoRelacionado` — one prior CFDI (Ingreso, PPD) being paid down."""
 
@@ -71,10 +90,21 @@ class Pago(BaseModel):
     )
     cta_beneficiario: str | None = None
     doctos_relacionados: list[PagoDoctoRelacionado] = Field(..., min_length=1)
+    traslados_p: list[ImpuestoP] = Field(
+        default_factory=list, description="Impuestos trasladados sobre el pago mismo (poco común)"
+    )
+    retenciones_p: list[ImpuestoP] = Field(
+        default_factory=list, description="Impuestos retenidos sobre el pago mismo (poco común)"
+    )
 
 
 class Totales(BaseModel):
-    """`Pagos/Totales` — optional aggregate totals across all `Pago` entries."""
+    """`Pagos/Totales` — required aggregate totals across all `Pago` entries.
+
+    The `Totales` element has no `minOccurs="0"` in `Pagos20.xsd.xml`
+    ("Nodo requerido para especificar el monto total de los pagos...") —
+    the element itself is mandatory, not just `MontoTotalPagos` within it.
+    """
 
     total_retenciones_iva: str | None = None
     total_retenciones_isr: str | None = None
@@ -93,5 +123,5 @@ class Pagos20(BaseModel):
     """`Pagos` root complement element. `Version` fixed at `2.0`."""
 
     version: str = Field(default="2.0", frozen=True)
-    totales: Totales | None = None
+    totales: Totales
     pagos: list[Pago] = Field(..., min_length=1)

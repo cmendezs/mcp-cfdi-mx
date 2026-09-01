@@ -1,6 +1,6 @@
 # mcp-cfdi-mx 🇲🇽
 
-[English](README.md)
+[English](README.md) | [Español](README.es-MX.md)
 
 <!-- mcp-name: io.github.cmendezs/mcp-cfdi-mx -->
 
@@ -8,9 +8,9 @@
 [![PyPI version](https://img.shields.io/pypi/v/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
 
-A Python MCP server providing tools for Mexican **electronic invoicing** compliant with **CFDI 4.0** and **Complemento de Pagos 2.0**, per SAT's Anexo 20 technical standard. It enables AI agents (Claude, IDEs) to build CFDI 4.0 documents (Ingreso, Egreso), compute and verify the Sello Digital, and validate Mexican RFC tax identifiers.
+A Python MCP server providing tools for Mexican **electronic invoicing** compliant with **CFDI 4.0** and **Complemento de Pagos 2.0**, per SAT's Anexo 20 technical standard. It enables AI agents (Claude, IDEs) to build, XSD-validate, and seal CFDI 4.0 documents (Ingreso, Egreso, and Complemento de Pagos 2.0), verify a PAC-returned Timbre Fiscal Digital stamp, and validate Mexican RFC tax identifiers.
 
-**Phase 1 scope.** This package covers CFDI 4.0 Ingreso, Egreso, and Complemento de Pagos 2.0 only — Carta Porte, Complemento de Nómina, Retenciones, and Comercio Exterior are not yet supported. See [Available tools](#available-tools) for exactly what is implemented today.
+**Phase 1 scope.** This package covers CFDI 4.0 Ingreso, Egreso, and Complemento de Pagos 2.0 only — Carta Porte, Complemento de Nómina, Retenciones, and Comercio Exterior are not yet supported, and it does not submit to any PAC. See [Available tools](#available-tools) for exactly what is implemented today.
 
 ---
 
@@ -109,26 +109,32 @@ Kiro supports MCP servers through a dedicated configuration file:
 
 ## Available tools
 
+### Build
+
+| Tool | Description |
+|------|-------------|
+| `mx__build_cfdi` | Build a well-formed, unsealed CFDI 4.0 `Comprobante` XML (Ingreso or Egreso) from structured input |
+| `mx__build_pago` | Build a Complemento de Pagos 2.0 CFDI (`TipoDeComprobante="P"`), composing the fixed single-`Concepto` wrapper SAT's guide mandates |
+
+### Validate and seal
+
+| Tool | Description |
+|------|-------------|
+| `mx__validate_cfdi` | Full XSD validation against `cfdv40.xsd`, plus `TimbreFiscalDigitalv11.xsd.xml` and/or `Pagos20.xsd.xml` when those complements are present |
+| `mx__seal_cfdi` | Compute the Sello Digital via `SelloDigitalSigner`, `sealing_mode`-aware (`"local"` \| `"pac"`) |
+| `mx__verify_tfd` | Parse a PAC-returned Timbre Fiscal Digital 1.1 stamp, and cryptographically verify `SelloSAT` when the PAC's certificate is supplied |
+
 ### Scope
 
 | Tool | Description |
 |------|-------------|
 | `mx__get_supported_scope` | Returns the CFDI document types, complementos, and sealing modes this package currently supports |
 
-### Coming next (not yet implemented)
+See [`docs/TOOLS.md`](docs/TOOLS.md) for the full parameter reference of every tool, generated from the live tool registry.
 
-Model generation for CFDI 4.0 Ingreso/Egreso and Complemento de Pagos 2.0 is implemented in
-`mcp_cfdi_mx.models` (`CFDIComprobante`, `Pagos20`), but is not yet exposed as MCP tools. The
-following are tracked in `context-library/roadmap-2026.md` (workspace root repo) as the next
-build phase:
+### Not yet implemented
 
-| Planned tool | Purpose |
-|------|-------------|
-| `mx__build_cfdi` | Build an Ingreso/Egreso `Comprobante` from structured input |
-| `mx__build_pago` | Build a Complemento de Pagos 2.0 CFDI (`TipoDeComprobante=P`) |
-| `mx__validate_cfdi` | Full XSD validation against `cfdv40.xsd` (+ TFD 1.1, + Pagos 2.0) |
-| `mx__seal_cfdi` | Compute the Sello Digital via `SelloDigitalSigner`, `sealing_mode`-aware (`"local"` \| `"pac"`) |
-| `mx__verify_tfd` | Parse and verify a PAC-returned Timbre Fiscal Digital 1.1 stamp |
+PAC submission transport (this package is PAC-agnostic and does not submit to any specific PAC), and later-phase complementos (Carta Porte, Complemento de Nómina, Retenciones, Comercio Exterior) — tracked in `context-library/roadmap-2026.md` (workspace root repo).
 
 ## Architecture
 
