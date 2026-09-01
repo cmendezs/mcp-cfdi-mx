@@ -16,7 +16,7 @@ verification tools are tracked as the next build phase in
 roadmap-2026.md, not yet implemented.
 
 Returns:
-    A dict describing current scope, for callers to check before
+    A `ScopeInfo` describing current scope, for callers to check before
     assuming a document type or complemento is supported.
 
 _No parameters._

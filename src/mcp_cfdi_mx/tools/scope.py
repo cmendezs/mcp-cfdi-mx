@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TypedDict
+from pydantic import BaseModel
 
 
-class ScopeInfo(TypedDict):
+class ScopeInfo(BaseModel):
     version: str
     phase: int
     supported_document_types: list[str]
@@ -25,7 +25,7 @@ def mx__get_supported_scope() -> ScopeInfo:
     roadmap-2026.md, not yet implemented.
 
     Returns:
-        A dict describing current scope, for callers to check before
+        A `ScopeInfo` describing current scope, for callers to check before
         assuming a document type or complemento is supported.
     """
     return ScopeInfo(
@@ -43,4 +43,4 @@ def mx__get_supported_scope() -> ScopeInfo:
     )
 
 
-__all__ = ["mx__get_supported_scope"]
+__all__ = ["mx__get_supported_scope", "ScopeInfo"]
