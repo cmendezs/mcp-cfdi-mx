@@ -52,7 +52,7 @@ those entries under the new version heading.
 - The MCP registry does **not** sync automatically with PyPI or GitHub — step 3 is required for every release.
 - The `server.json` description field must be **≤ 100 characters**.
 - PyPI rejects re-uploads of the same version — always bump before tagging.
-- Not published yet. The audit gate is clean (0 blocking) and Phase 1 tools
-  (build/validate/seal/verify-TFD) are implemented and tested as of v0.2.0; PAC submission
-  transport and later-phase complementos remain out of scope — see `CHANGELOG.md` and
+- Published v0.2.0 (2026-09-02) — first release, live on PyPI and the MCP registry. Phase 1
+  tools (build/validate/seal/verify-TFD) are implemented and tested; PAC submission transport
+  and later-phase complementos remain out of scope — see `CHANGELOG.md` and
   `context-library/roadmap-2026.md`.
