@@ -51,7 +51,7 @@ memory — see `context-library/regulatory-watch/sources.md` for how these are t
 | `MatrizDeErrores_CFDI_v40_20260325.xls` | Official validation/error matrix | Business-rule reference (deferred; XSD-first per BR precedent) |
 | `Guia_llenado_pagos.pdf` | Fill-in guide for Complemento de Pagos 2.0 | Phase-1 Pagos semantics |
 | `Guia_complemento_Comercio_Exterior.pdf` | Comercio Exterior complement guide | Out of Phase 1 — kept for a later phase |
-| `Guia_llenadoCFDI_DPA.pdf` | Donativos/DPA complement guide | Out of Phase 1 — kept for a later phase |
+| `Guia_llenadoCFDI_DPA.pdf` | "Otros derechos e impuestos" (DPA — Contribuciones, Derechos, Productos y Aprovechamientos collected by Federación/Entidades/Municipios) complement guide. Title verified directly from the PDF's own cover page — **not** the Donativos (Donatarias) complemento, a distinct SAT complemento this bundle does not cover; a prior version of this file mislabeled it "Donativos/DPA" | Out of Phase 1 — kept for a later phase |
 | `Guia_llenado_CFDI_global.pdf` | Factura global (simplified/aggregate receipts) guide | Out of Phase 1 — kept for a later phase |
 | `Guia_llenado_Nomina.pdf` | Complemento de Nómina 1.2 guide | Out of Phase 1 — kept for a later phase |
 
