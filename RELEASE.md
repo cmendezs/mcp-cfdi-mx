@@ -56,3 +56,6 @@ those entries under the new version heading.
   tools (build/validate/seal/verify-TFD) are implemented and tested; PAC submission transport
   and later-phase complementos remain out of scope — see `CHANGELOG.md` and
   `context-library/roadmap-2026.md`.
+- Published v0.3.0 (2026-09-03) — first-audit remediation (MX-SC-1/2/3/4, MX-DOC-1, MX-TC-1,
+  MX-SH-1), live on PyPI and the MCP registry. See `CHANGELOG.md` and
+  `context-library/audit-history.md` "MX country audit — finding tracker".
