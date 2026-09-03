@@ -26,7 +26,32 @@ from __future__ import annotations
 from enum import StrEnum
 
 from mcp_einvoicing_core.models import InvoiceDocument, InvoiceLineItem, InvoiceParty, TaxIdentifier
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+# `t_FechaH` restriction, verbatim from specs/tdCFDI.xsd:99 (AAAA-MM-DDThh:mm:ss).
+_T_FECHAH_PATTERN = (
+    r"(20[1-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])"
+    r"T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])"
+)
+
+# `Nombre` attribute restriction, verbatim from specs/cfdv40.xsd.xml:82-92 (Emisor)
+# and :124-135 (Receptor) — identical minLength=1/maxLength=300/pattern in both.
+_T_NOMBRE_PATTERN = r"[^|]{1,300}"
+
+# Generic ("público en general" / foreign-resident) RFCs and their required
+# RegimenFiscalReceptor/UsoCFDI pairing. Both XAXX010101000 and XEXX010101000
+# require RegimenFiscalReceptor="616" — confirmed in Anexo20_2022.pdf (DOF
+# 2022-01-13), "RegimenFiscalReceptor" validation clause: "Si el atributo Rfc
+# del nodo Receptor contiene el valor 'XAXX010101000' o el valor
+# 'XEXX010101000' en este atributo se debe registrar la clave '616'." UsoCFDI
+# must be "S01" for both on non-Pago CFDIs — confirmed in
+# Anexo_20_Guia_de_llenado_CFDI.pdf (XEXX: "en este campo se debe registrar la
+# clave 'S01'"; XAXX: worked example "Uso del CFDI: S01"). This does NOT apply
+# to Pago-type CFDIs: Guia_llenado_pagos.pdf fixes UsoCFDI="CP01" for every
+# Pago CFDI regardless of receptor RFC, with no generic-RFC exception.
+_GENERIC_RFC_REGIMEN_FISCAL = "616"
+_GENERIC_RFC_USO_CFDI = "S01"
+_GENERIC_RFCS = frozenset({"XAXX010101000", "XEXX010101000"})
 
 
 class TipoDeComprobante(StrEnum):
@@ -62,6 +87,13 @@ class MXEmisor(InvoiceParty):
     method's docstring for why no check-digit is verified.
     """
 
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=300,
+        pattern=_T_NOMBRE_PATTERN,
+        description="Nombre, denominación o razón social del emisor (Nombre, cfdv40.xsd.xml:82-92)",
+    )
     regimen_fiscal: str = Field(
         ..., description="Clave del régimen fiscal del emisor (catálogo c_RegimenFiscal)"
     )
@@ -82,6 +114,15 @@ class MXReceptor(InvoiceParty):
     necessarily the delivery address.
     """
 
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=300,
+        pattern=_T_NOMBRE_PATTERN,
+        description=(
+            "Nombre, denominación o razón social del receptor (Nombre, cfdv40.xsd.xml:124-135)"
+        ),
+    )
     regimen_fiscal_receptor: str = Field(
         ..., description="Clave del régimen fiscal del receptor (catálogo c_RegimenFiscal)"
     )
@@ -178,6 +219,12 @@ class CFDIComprobante(InvoiceDocument):
     buyer: MXReceptor
     lines: list[CFDIConcepto] = Field(default_factory=list, min_length=1)  # type: ignore[assignment]
 
+    date: str = Field(
+        ...,
+        pattern=_T_FECHAH_PATTERN,
+        description="Fecha y hora de expedición (t_FechaH, AAAA-MM-DDThh:mm:ss), tdCFDI.xsd:99",
+    )
+
     currency: str = Field(default="MXN", min_length=3, max_length=3)
 
     version: str = Field(default="4.0", frozen=True, description="Atributo Version, fijo en '4.0'")
@@ -218,3 +265,24 @@ class CFDIComprobante(InvoiceDocument):
         default_factory=list,
         description="Grupo CfdiRelacionados (usado por Egreso para referenciar el Ingreso que abona)",
     )
+
+    @model_validator(mode="after")
+    def _validate_generic_rfc_receptor(self) -> CFDIComprobante:
+        if self.buyer.tax_id.identifier not in _GENERIC_RFCS:
+            return self
+        if self.buyer.regimen_fiscal_receptor != _GENERIC_RFC_REGIMEN_FISCAL:
+            raise ValueError(
+                f"Receptor RFC {self.buyer.tax_id.identifier!r} requires "
+                f"regimen_fiscal_receptor={_GENERIC_RFC_REGIMEN_FISCAL!r} "
+                "(Anexo 20, atributo RegimenFiscalReceptor)."
+            )
+        if (
+            self.tipo_de_comprobante != TipoDeComprobante.PAGO
+            and self.buyer.uso_cfdi != _GENERIC_RFC_USO_CFDI
+        ):
+            raise ValueError(
+                f"Receptor RFC {self.buyer.tax_id.identifier!r} requires "
+                f"uso_cfdi={_GENERIC_RFC_USO_CFDI!r} on non-Pago CFDIs "
+                "(Guía de llenado del CFDI 4.0, atributo UsoCFDI)."
+            )
+        return self

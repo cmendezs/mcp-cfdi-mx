@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-02T06:22:31.096301+00:00",
+  "generated_at": "2026-09-03T07:49:19.243126+00:00",
   "pkg_name": "mcp-cfdi-mx",
-  "pkg_version": "0.2.0",
+  "pkg_version": "0.3.0",
   "core_version": "1.30.0",
   "core_version_compatible": true,
   "exit_code": 1,

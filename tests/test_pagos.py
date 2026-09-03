@@ -65,3 +65,31 @@ class TestPagos20:
         complemento = Pagos20(pagos=[pago], totales=totales)
         with pytest.raises(ValidationError):
             complemento.version = "1.0"
+
+
+class TestSaldoReconciliation:
+    """MX-SC-4: ImpSaldoAnt must equal ImpPagado + ImpSaldoInsoluto."""
+
+    def test_unbalanced_amounts_rejected(self) -> None:
+        with pytest.raises(ValidationError, match="ImpSaldoAnt"):
+            PagoDoctoRelacionado(
+                id_documento="12345678-1234-1234-1234-123456789012",
+                moneda_dr="MXN",
+                num_parcialidad="1",
+                imp_saldo_ant="100.00",
+                imp_pagado="40.00",
+                imp_saldo_insoluto="40.00",
+                objeto_imp_dr="02",
+            )
+
+    def test_balanced_amounts_accepted(self) -> None:
+        docto = PagoDoctoRelacionado(
+            id_documento="12345678-1234-1234-1234-123456789012",
+            moneda_dr="MXN",
+            num_parcialidad="1",
+            imp_saldo_ant="100.00",
+            imp_pagado="40.00",
+            imp_saldo_insoluto="60.00",
+            objeto_imp_dr="02",
+        )
+        assert docto.imp_saldo_ant == "100.00"

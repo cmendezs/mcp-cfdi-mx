@@ -11,7 +11,9 @@ EN 16931/InvoiceDocument-shaped concept. The generator tool composes the two.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from decimal import Decimal, InvalidOperation
+
+from pydantic import BaseModel, Field, model_validator
 
 
 class ImpuestoDR(BaseModel):
@@ -66,6 +68,27 @@ class PagoDoctoRelacionado(BaseModel):
     objeto_imp_dr: str = Field(..., description="ObjetoImpDR — clave del catálogo c_ObjetoImp")
     traslados_dr: list[ImpuestoDR] = Field(default_factory=list)
     retenciones_dr: list[ImpuestoDR] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _validate_saldo_reconciliation(self) -> PagoDoctoRelacionado:
+        # Guia_llenado_pagos.pdf, atributo ImpSaldoInsoluto: "debe calcularse de
+        # los campos: ImpSaldoAnt menos el ImpPagado" — i.e. ImpSaldoAnt ==
+        # ImpPagado + ImpSaldoInsoluto. Decimal, not float, for exact comparison.
+        try:
+            saldo_ant = Decimal(self.imp_saldo_ant)
+            pagado = Decimal(self.imp_pagado)
+            saldo_insoluto = Decimal(self.imp_saldo_insoluto)
+        except InvalidOperation as exc:
+            raise ValueError(
+                f"imp_saldo_ant, imp_pagado and imp_saldo_insoluto must be decimal amounts: {exc}"
+            ) from exc
+        if saldo_ant != pagado + saldo_insoluto:
+            raise ValueError(
+                "ImpSaldoAnt must equal ImpPagado + ImpSaldoInsoluto "
+                f"({saldo_ant} != {pagado} + {saldo_insoluto}) — Guía de llenado de pagos, "
+                "atributo ImpSaldoInsoluto."
+            )
+        return self
 
 
 class Pago(BaseModel):

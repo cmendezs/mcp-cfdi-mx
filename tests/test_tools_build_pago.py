@@ -110,3 +110,12 @@ class TestBuildPago:
         result = mx__build_pago(bad_comprobante, _pagos_data())
         assert result["error"] == "validation_error"
         assert result["field"] == "comprobante_data"
+
+    def test_uso_cfdi_forced_to_cp01(self) -> None:
+        mismatched = _comprobante_data()
+        mismatched["buyer"]["uso_cfdi"] = "G03"
+        result = mx__build_pago(mismatched, _pagos_data())
+        assert "error" not in result
+        root = etree.fromstring(result["xml"].encode())
+        receptor_el = root.find(_q("Receptor"))
+        assert receptor_el.get("UsoCFDI") == "CP01"

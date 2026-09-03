@@ -180,12 +180,12 @@ def build_comprobante(comprobante: CFDIComprobante) -> etree._Element:
 
     emisor_el = etree.SubElement(root, _q("Emisor"))
     emisor_el.set("Rfc", comprobante.seller.tax_id.identifier)
-    emisor_el.set("Nombre", comprobante.seller.name or "")
+    emisor_el.set("Nombre", comprobante.seller.name)
     emisor_el.set("RegimenFiscal", comprobante.seller.regimen_fiscal)
 
     receptor_el = etree.SubElement(root, _q("Receptor"))
     receptor_el.set("Rfc", comprobante.buyer.tax_id.identifier)
-    receptor_el.set("Nombre", comprobante.buyer.name or "")
+    receptor_el.set("Nombre", comprobante.buyer.name)
     receptor_el.set("DomicilioFiscalReceptor", comprobante.buyer.domicilio_fiscal_receptor)
     receptor_el.set("RegimenFiscalReceptor", comprobante.buyer.regimen_fiscal_receptor)
     receptor_el.set("UsoCFDI", comprobante.buyer.uso_cfdi)

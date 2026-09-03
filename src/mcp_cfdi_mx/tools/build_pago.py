@@ -61,10 +61,9 @@ def mx__build_pago(
     with the `Pagos20` complement built from `pagos_data`, and attaches the
     complement under `cfdi:Complemento`.
 
-    `comprobante_data` must set `buyer.uso_cfdi="CP01"` (the schema requires
-    it for Pagos CFDIs per the same guide) — not forced here since it is a
-    receptor-level field the caller controls, but a mismatch is a caller
-    error, not something this tool silently corrects.
+    `buyer.uso_cfdi` is forced to `"CP01"` (the schema requires it for every
+    Pagos CFDI per the same guide, regardless of what the caller passes) —
+    mirrors how this tool already forces `SubTotal`/`Moneda`/etc.
 
     The output XML omits `Sello`/`NoCertificado`/`Certificado`, same as
     `mx__build_cfdi` — seal afterward with `mx__seal_cfdi`.
@@ -73,9 +72,11 @@ def mx__build_pago(
     - ``xml``: the generated, unsealed CFDI XML string (with the Pagos
       complement attached)
     """
+    buyer = {**(comprobante_data.get("buyer") or {}), "uso_cfdi": "CP01"}
     merged = {
         **comprobante_data,
         **_PAGO_COMPROBANTE_FIXED,
+        "buyer": buyer,
         "tipo_de_comprobante": TipoDeComprobante.PAGO,
         "lines": [dict(_PAGO_CONCEPTO_DEFAULTS)],
     }

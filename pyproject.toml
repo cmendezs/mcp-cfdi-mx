@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-cfdi-mx"
-version = "0.2.0"
+version = "0.3.0"
 description = "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)"
 readme = "README.md"
 license = { text = "Apache-2.0" }

@@ -37,7 +37,14 @@ def mx__seal_cfdi(
         "Path to the CSD's encrypted PKCS#8 DER private key (.key). Required when sealing_mode='local'.",
     ] = None,
     key_password: Annotated[
-        str | None, "Passphrase for the private key. Required when sealing_mode='local'."
+        str | None,
+        (
+            "Passphrase for the private key. Required when sealing_mode='local'. This is "
+            "a secret that transits the tool call as plain text — callers should source it "
+            "from an environment variable or secrets manager reference on their side rather "
+            "than hardcoding it, the same as cert_path/key_path are file references rather "
+            "than inline key material."
+        ),
     ] = None,
     no_certificado: Annotated[
         str | None,
