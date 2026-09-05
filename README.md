@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 [![PyPI version](https://img.shields.io/pypi/v/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
-[![Python](https://img.shields.io/pypi/pyversions/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
+[![Python](https://img.shields.io/pypi/pyversions/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/) [![mcp-cfdi-mx MCP server](https://glama.ai/mcp/servers/cmendezs/mcp-cfdi-mx/badges/score.svg)](https://glama.ai/mcp/servers/cmendezs/mcp-cfdi-mx)
 
 A Python MCP server providing tools for Mexican **electronic invoicing** compliant with **CFDI 4.0** and **Complemento de Pagos 2.0**, per SAT's Anexo 20 technical standard. It enables AI agents (Claude, IDEs) to build, XSD-validate, and seal CFDI 4.0 documents (Ingreso, Egreso, and Complemento de Pagos 2.0), verify a PAC-returned Timbre Fiscal Digital stamp, and validate Mexican RFC tax identifiers.
 

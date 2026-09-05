@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 [![PyPI version](https://img.shields.io/pypi/v/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
-[![Python](https://img.shields.io/pypi/pyversions/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/)
+[![Python](https://img.shields.io/pypi/pyversions/mcp-cfdi-mx.svg)](https://pypi.org/project/mcp-cfdi-mx/) [![mcp-cfdi-mx MCP server](https://glama.ai/mcp/servers/cmendezs/mcp-cfdi-mx/badges/score.svg)](https://glama.ai/mcp/servers/cmendezs/mcp-cfdi-mx)
 
 Un servidor MCP en Python que provee herramientas para la **facturación electrónica** mexicana conforme al **CFDI 4.0** y al **Complemento de Pagos 2.0**, según el estándar técnico Anexo 20 del SAT. Permite a agentes de IA (Claude, IDEs) construir, validar contra el XSD y sellar documentos CFDI 4.0 (Ingreso, Egreso y Complemento de Pagos 2.0), verificar un Timbre Fiscal Digital devuelto por un PAC, y validar RFCs mexicanos.
 
