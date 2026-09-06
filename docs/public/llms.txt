@@ -1,0 +1,17 @@
+# mcp-cfdi-mx
+
+> MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)
+
+## Docs
+
+- [Overview](https://cmendezs.github.io/mcp-cfdi-mx/): the full README — what this server does, installation, configuration, available tools
+- [Tools](https://cmendezs.github.io/mcp-cfdi-mx/tools/): full MCP tool reference
+- [Changelog](https://cmendezs.github.io/mcp-cfdi-mx/changelog/): version history
+- [Contributing](https://cmendezs.github.io/mcp-cfdi-mx/contributing/): dev setup and PR checklist
+- [Security](https://cmendezs.github.io/mcp-cfdi-mx/security/): vulnerability disclosure policy
+
+## Links
+
+- [PyPI](https://pypi.org/project/mcp-cfdi-mx/)
+- [MCP registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.cmendezs/mcp-cfdi-mx)
+- [GitHub](https://github.com/cmendezs/mcp-cfdi-mx)
