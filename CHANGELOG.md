@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.1] - 2026-09-07
+
+### Fixed
+- **`src/mcp_cfdi_mx/__init__.py`'s `__version__` was left at `0.2.0`** across
+  the v0.3.0 release, while `pyproject.toml` and `server.json` were both
+  bumped correctly. Purely a metadata fix; no behavioral change.
+
+### Added
+- `tests/test_metadata.py::test_version_slot_consistency` — regression test
+  guarding all three version slots against future drift.
+
+---
+
 ## [0.3.0] - 2026-09-03
 
 Remediates the findings from the first Mexico country audit
