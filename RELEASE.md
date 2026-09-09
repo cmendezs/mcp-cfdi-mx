@@ -59,3 +59,6 @@ those entries under the new version heading.
 - Published v0.3.0 (2026-09-03) — first-audit remediation (MX-SC-1/2/3/4, MX-DOC-1, MX-TC-1,
   MX-SH-1), live on PyPI and the MCP registry. See `CHANGELOG.md` and
   `context-library/audit-history.md` "MX country audit — finding tracker".
+- Published v0.4.0 (2026-09-09) — core audit Step 3 item 1 (CORE-1 BLOCKING packaging fix,
+  CORE-7 resolver-hook delegation, CORE-8 scope descriptor), live on PyPI and the MCP
+  registry. See `CHANGELOG.md` and `audit/2026-09-audit-core.md`.

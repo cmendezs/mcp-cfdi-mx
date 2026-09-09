@@ -11,6 +11,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-09-09
+
+Step 3 (country wave 1), item 1 of the core audit's execution ladder
+(`audit/2026-09-audit-core.md`) — the highest-severity item in the wave.
+
+### Fixed
+- **CORE-1 (BLOCKING)** — Runtime XSD/XSLT resources moved from repo-root
+  `specs/` into `src/mcp_cfdi_mx/resources/` so they ship in the installed
+  wheel. Three of six tools raised on the published v0.3.1 wheel because
+  the old `_SPECS_DIR` path resolved outside the installed package once
+  pip-installed. Guarded going forward by core's new audit CHECK 7
+  (`run_check_resource_paths`, core v1.32.0), now wired into
+  `audit/audit_vs_core.py`.
+
+### Changed
+- **CORE-7** — `cfdi_validator()`, `tfd_validator()`, and `pagos_validator()`
+  now delegate to core's `XSDValidator(known_imports=...)` resolver hook
+  (core v1.32.0) instead of a package-local `_KnownURLResolver`. Only
+  `full_validator()`'s synthetic in-memory schema still needs a local
+  resolver.
+- **CORE-8** — `tools/scope.py`'s `ScopeInfo` now subclasses core's
+  `BaseScopeInfo` (core v1.32.0). `mx__get_supported_scope`'s `version`
+  output field is renamed `schema_version` to match the shared base.
+- `mcp-einvoicing-core` floor pin bumped to `>=1.32.0,<2.0.0`.
+
+---
+
 ## [0.3.1] - 2026-09-07
 
 ### Fixed
