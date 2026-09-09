@@ -1,6 +1,6 @@
 # mcp-cfdi-mx
 
-> MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)
+> MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0), PAC-agnostic sealing
 
 ## Docs
 

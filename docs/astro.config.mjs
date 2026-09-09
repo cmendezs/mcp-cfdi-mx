@@ -8,7 +8,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "mcp-cfdi-mx",
-      description: "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)",
+      description: "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0), PAC-agnostic sealing",
       customCss: ["./src/styles/docs-theme.css"],
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/cmendezs/mcp-cfdi-mx" },
@@ -28,7 +28,7 @@ export default defineConfig({
       plugins: [
         starlightLlmsTxt({
           projectName: "mcp-cfdi-mx",
-          description: "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)",
+          description: "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0), PAC-agnostic sealing",
           customSets: [
             {
               label: "Key links",

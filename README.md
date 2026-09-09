@@ -153,6 +153,15 @@ and IT (CAdES) use for their own signature standards.
    [ AI Agent (Claude) ] <--- (CFDI 4.0 / Pagos 2.0)
 ```
 
+## Vendor neutrality
+
+This server implements the standard itself: it builds, validates, and signs the document
+locally. It is not a client for a commercial invoicing platform, and your signing keys and
+credentials never leave your own infrastructure.
+
+A PAC (Proveedor Autorizado de Certificación) must stamp the CFDI; this server seals it
+locally with your own CSD and hands any PAC an already-sealed document.
+
 ## Supported standards
 
 | Standard | Version | Source |

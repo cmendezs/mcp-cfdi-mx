@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mcp-cfdi-mx"
 version = "0.4.0"
-description = "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0)"
+description = "MCP server for Mexican electronic invoicing (CFDI 4.0, Complemento de Pagos 2.0), PAC-agnostic sealing"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Christophe Mendez" }]

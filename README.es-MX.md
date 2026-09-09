@@ -153,6 +153,15 @@ e IT (CAdES) para sus propios estándares de firma.
    [ AI Agent (Claude) ] <--- (CFDI 4.0 / Pagos 2.0)
 ```
 
+## Neutralidad frente a proveedores
+
+Este servidor implementa el estándar por sí mismo: construye, valida y firma el documento
+localmente. No es un cliente de ninguna plataforma de facturación comercial, y tus claves de
+firma y credenciales nunca salen de tu propia infraestructura.
+
+Un PAC (Proveedor Autorizado de Certificación) debe timbrar el CFDI; este servidor lo sella
+localmente con tu propio CSD y entrega a cualquier PAC un documento ya sellado.
+
 ## Estándares soportados
 
 | Estándar | Versión | Fuente |
