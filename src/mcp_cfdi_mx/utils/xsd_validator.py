@@ -4,14 +4,19 @@ SAT's schemas `xs:import` each other by absolute `http://www.sat.gob.mx/...`
 URL (`cfdv40.xsd.xml` imports `catCFDI.xsd`/`tdCFDI.xsd`; `Pagos20.xsd.xml`
 additionally imports `catPagos.xsd.xml`). None of that resolves offline, so
 each validator here compiles its schema through a resolver that maps the
-known import URLs to the local files bundled under `specs/`, mirroring
-`mcp_einvoicing_core.digital_signature.SelloDigitalSigner`'s own resolver for
-the cadena original XSLT includes.
+known import URLs to the local files bundled under `resources/`.
 
-Subclasses `mcp_einvoicing_core.schematron.BaseXSDValidator` rather than
-using the concrete `XSDValidator` directly, since that class's constructor
-has no resolver hook — this is exactly the "needs custom compilation"
-extension point `BaseXSDValidator`'s own docstring documents.
+`cfdi_validator()`, `tfd_validator()`, and `pagos_validator()` each compile a
+single schema entry-point and delegate directly to
+`mcp_einvoicing_core.schematron.XSDValidator`'s `known_imports` hook (core
+v1.32.0, CORE-7) rather than reimplementing resolver-aware compilation —
+that hook is exactly this package's own `_KnownURLResolver` pattern, since
+promoted to core. `full_validator()` still needs a package-local resolver:
+it compiles a *synthetic* in-memory schema (an `xs:import`-only document
+with no file of its own) combining `cfdv40.xsd.xml` with the requested
+complement schemas, which core's `XSDValidator` cannot do since its
+constructor only accepts a schema *file* path — this is the "needs custom
+compilation" extension point `BaseXSDValidator`'s own docstring documents.
 """
 
 from __future__ import annotations
@@ -19,10 +24,15 @@ from __future__ import annotations
 from pathlib import Path
 
 from lxml import etree
-from mcp_einvoicing_core.schematron import BaseXSDValidator, ValidationMessage, ValidationResult
+from mcp_einvoicing_core.schematron import (
+    BaseXSDValidator,
+    ValidationMessage,
+    ValidationResult,
+    XSDValidator,
+)
 from mcp_einvoicing_core.xml_utils import safe_fromstring
 
-_SPECS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "specs"
+_RESOURCES_DIR = Path(__file__).resolve().parent.parent / "resources"
 
 CFDI_TARGET_NS = "http://www.sat.gob.mx/cfd/4"
 _TFD_TARGET_NS = "http://www.sat.gob.mx/TimbreFiscalDigital"
@@ -33,13 +43,18 @@ _TD_CFDI_URL = "http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI
 _CAT_PAGOS_URL = "http://www.sat.gob.mx/sitio_internet/cfd/catalogos/Pagos/catPagos.xsd"
 
 _SHARED_IMPORTS: dict[str, str] = {
-    _CAT_CFDI_URL: str(_SPECS_DIR / "catCFDI.xsd"),
-    _TD_CFDI_URL: str(_SPECS_DIR / "tdCFDI.xsd"),
+    _CAT_CFDI_URL: str(_RESOURCES_DIR / "catCFDI.xsd"),
+    _TD_CFDI_URL: str(_RESOURCES_DIR / "tdCFDI.xsd"),
 }
 
 
-class _KnownURLResolver(etree.Resolver):
-    """Resolve a fixed map of SAT import URLs (or synthetic local keys) to local files."""
+class _SyntheticSchemaResolver(etree.Resolver):
+    """Resolve a fixed map of SAT import URLs or synthetic local keys to local files.
+
+    Used only by `full_validator()`'s in-memory synthetic schema — the one
+    case core's file-path-only `XSDValidator` cannot cover. See the module
+    docstring.
+    """
 
     def __init__(self, known: dict[str, str]) -> None:
         super().__init__()
@@ -51,27 +66,11 @@ class _KnownURLResolver(etree.Resolver):
         return None
 
 
-class _ResolvedXSDValidator(BaseXSDValidator):
-    """Same validation logic as core's `XSDValidator`, with resolver-aware compilation."""
+class _SyntheticXSDValidator(BaseXSDValidator):
+    """Validates against an in-memory `etree.XMLSchema`, for `full_validator()` only."""
 
     def __init__(self, schema: etree.XMLSchema) -> None:
         self._schema = schema
-
-    @classmethod
-    def from_entry_point(
-        cls, entry_path: Path, known_imports: dict[str, str]
-    ) -> _ResolvedXSDValidator:
-        """Compile *entry_path* directly as the schema document."""
-        if not entry_path.exists():
-            raise FileNotFoundError(f"XSD schema not found: {entry_path}.")
-        parser = etree.XMLParser()
-        parser.resolvers.add(_KnownURLResolver(known_imports))
-        try:
-            tree = etree.parse(str(entry_path), parser)
-            schema = etree.XMLSchema(tree)
-        except etree.XMLSchemaParseError as exc:
-            raise ValueError(f"Failed to parse XSD schema {entry_path}: {exc}") from exc
-        return cls(schema)
 
     def validate(self, document: bytes, *, profile: str = "", syntax: str = "") -> ValidationResult:
         try:
@@ -103,7 +102,7 @@ class _ResolvedXSDValidator(BaseXSDValidator):
         return ValidationResult(is_valid=False, errors=errors, profile=profile, syntax=syntax)
 
 
-def cfdi_validator() -> _ResolvedXSDValidator:
+def cfdi_validator() -> XSDValidator:
     """XSD validator for a bare CFDI 4.0 `Comprobante` (no `Complemento` contents checked).
 
     `Complemento`'s `xs:any` wildcard defaults to `processContents="strict"`
@@ -116,12 +115,12 @@ def cfdi_validator() -> _ResolvedXSDValidator:
     "no matching global element declaration" error for any of them, which is
     a limitation of this narrower schema, not the document.
     """
-    return _ResolvedXSDValidator.from_entry_point(_SPECS_DIR / "cfdv40.xsd.xml", _SHARED_IMPORTS)
+    return XSDValidator(_RESOURCES_DIR / "cfdv40.xsd.xml", known_imports=_SHARED_IMPORTS)
 
 
 def full_validator(
     *, include_tfd: bool = False, include_pagos: bool = False
-) -> _ResolvedXSDValidator:
+) -> _SyntheticXSDValidator:
     """XSD validator combining `cfdv40.xsd` with the requested complement schemas.
 
     Compiles a synthetic in-memory schema that `xs:import`s `cfdv40.xsd.xml`
@@ -133,21 +132,21 @@ def full_validator(
     """
     imports = [f'<xs:import namespace="{CFDI_TARGET_NS}" schemaLocation="cfdv40.xsd.xml"/>']
     known_imports = dict(_SHARED_IMPORTS)
-    known_imports["cfdv40.xsd.xml"] = str(_SPECS_DIR / "cfdv40.xsd.xml")
+    known_imports["cfdv40.xsd.xml"] = str(_RESOURCES_DIR / "cfdv40.xsd.xml")
 
     if include_tfd:
         imports.append(
             f'<xs:import namespace="{_TFD_TARGET_NS}" schemaLocation="TimbreFiscalDigitalv11.xsd.xml"/>'
         )
         known_imports["TimbreFiscalDigitalv11.xsd.xml"] = str(
-            _SPECS_DIR / "TimbreFiscalDigitalv11.xsd.xml"
+            _RESOURCES_DIR / "TimbreFiscalDigitalv11.xsd.xml"
         )
     if include_pagos:
         imports.append(
             f'<xs:import namespace="{_PAGOS_TARGET_NS}" schemaLocation="Pagos20.xsd.xml"/>'
         )
-        known_imports["Pagos20.xsd.xml"] = str(_SPECS_DIR / "Pagos20.xsd.xml")
-        known_imports[_CAT_PAGOS_URL] = str(_SPECS_DIR / "catPagos.xsd.xml")
+        known_imports["Pagos20.xsd.xml"] = str(_RESOURCES_DIR / "Pagos20.xsd.xml")
+        known_imports[_CAT_PAGOS_URL] = str(_RESOURCES_DIR / "catPagos.xsd.xml")
 
     synthetic = (
         '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
@@ -156,21 +155,22 @@ def full_validator(
     )
 
     parser = etree.XMLParser()
-    parser.resolvers.add(_KnownURLResolver(known_imports))
+    parser.resolvers.add(_SyntheticSchemaResolver(known_imports))
     root = etree.fromstring(synthetic.encode("utf-8"), parser)
     schema = etree.XMLSchema(etree.ElementTree(root))
-    return _ResolvedXSDValidator(schema)
+    return _SyntheticXSDValidator(schema)
 
 
-def tfd_validator() -> _ResolvedXSDValidator:
+def tfd_validator() -> XSDValidator:
     """XSD validator for a standalone `TimbreFiscalDigital` element (`TimbreFiscalDigitalv11.xsd.xml`)."""
-    return _ResolvedXSDValidator.from_entry_point(
-        _SPECS_DIR / "TimbreFiscalDigitalv11.xsd.xml", {_TD_CFDI_URL: _SHARED_IMPORTS[_TD_CFDI_URL]}
+    return XSDValidator(
+        _RESOURCES_DIR / "TimbreFiscalDigitalv11.xsd.xml",
+        known_imports={_TD_CFDI_URL: _SHARED_IMPORTS[_TD_CFDI_URL]},
     )
 
 
-def pagos_validator() -> _ResolvedXSDValidator:
+def pagos_validator() -> XSDValidator:
     """XSD validator for a standalone `Pagos` complement element (`Pagos20.xsd.xml`)."""
     imports = dict(_SHARED_IMPORTS)
-    imports[_CAT_PAGOS_URL] = str(_SPECS_DIR / "catPagos.xsd.xml")
-    return _ResolvedXSDValidator.from_entry_point(_SPECS_DIR / "Pagos20.xsd.xml", imports)
+    imports[_CAT_PAGOS_URL] = str(_RESOURCES_DIR / "catPagos.xsd.xml")
+    return XSDValidator(_RESOURCES_DIR / "Pagos20.xsd.xml", known_imports=imports)

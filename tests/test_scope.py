@@ -7,6 +7,7 @@ from mcp_cfdi_mx.tools.scope import mx__get_supported_scope
 
 def test_returns_phase_1_scope() -> None:
     scope = mx__get_supported_scope()
+    assert scope.schema_version == "4.0"
     assert scope.phase == 1
     assert set(scope.supported_document_types) == {"I", "E", "P"}
     assert "Pagos 2.0" in scope.supported_complementos

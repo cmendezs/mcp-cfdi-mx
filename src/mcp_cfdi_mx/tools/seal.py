@@ -7,13 +7,15 @@ from typing import Annotated, Literal
 
 from mcp_einvoicing_core.digital_signature import SelloDigitalSigner, SelloDigitalSignerConfig
 
-_SPECS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "specs"
-_CADENA_ORIGINAL_XSLT = _SPECS_DIR / "cadenaoriginal_4_0.xslt"
+_RESOURCES_DIR = Path(__file__).resolve().parent.parent / "resources"
+_CADENA_ORIGINAL_XSLT = _RESOURCES_DIR / "cadenaoriginal_4_0.xslt"
 _XSLT_INCLUDE_PATHS = {
     "http://www.sat.gob.mx/sitio_internet/cfd/2/cadenaoriginal_2_0/utilerias.xslt": str(
-        _SPECS_DIR / "utilerias.xslt"
+        _RESOURCES_DIR / "utilerias.xslt"
     ),
-    "http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos20.xslt": str(_SPECS_DIR / "Pagos20.xslt"),
+    "http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos20.xslt": str(
+        _RESOURCES_DIR / "Pagos20.xslt"
+    ),
 }
 
 
@@ -59,8 +61,9 @@ def mx__seal_cfdi(
     """Seal (or deliberately not seal) a CFDI 4.0 Comprobante, PAC-agnostic.
 
     `sealing_mode="local"` computes the cadena original via the actual SAT
-    XSLT transform (`specs/cadenaoriginal_4_0.xslt`, with its `utilerias.xslt`
-    and `Pagos20.xslt` includes resolved from `specs/`; any other complemento
+    XSLT transform (`resources/cadenaoriginal_4_0.xslt`, with its
+    `utilerias.xslt` and `Pagos20.xslt` includes resolved from `resources/`;
+    any other complemento
     include a document might reference is not in Phase-1 scope and stubs to
     a no-op template — see `SelloDigitalSigner`'s docstring), then computes
     `Sello`/`NoCertificado`/`Certificado` via

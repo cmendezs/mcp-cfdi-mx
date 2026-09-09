@@ -17,9 +17,16 @@ The invoice-tree pathway is resolved (``_IS_EN16931_FAMILY = False``,
 Phase 1 is fully implemented: ``mx__build_cfdi``, ``mx__build_pago``,
 ``mx__validate_cfdi``, ``mx__seal_cfdi``, ``mx__verify_tfd``, and
 ``mx__get_supported_scope`` are all live tools. Sealing routes through
-core's ``SelloDigitalSigner``; XSD validation subclasses core's
-``BaseXSDValidator`` (a resolver-aware compilation, needed for SAT's
-absolute-URL schema imports — see ``utils/xsd_validator.py``). Remaining
+core's ``SelloDigitalSigner``; XSD validation delegates to core's
+``XSDValidator`` and its ``known_imports`` resolver hook (v1.32.0, CORE-7)
+for three of four validators, needed for SAT's absolute-URL schema imports
+— only ``full_validator()``'s synthetic in-memory schema still needs a
+package-local ``BaseXSDValidator`` subclass (see
+``utils/xsd_validator.py``). Runtime XSD/XSLT resources live under
+``src/mcp_cfdi_mx/resources/`` so they ship in the wheel (CORE-1, v0.4.0);
+CHECK 7 below guards against that regressing. Scope introspection
+(``mx__get_supported_scope``) subclasses core's ``BaseScopeInfo``
+(v1.32.0, CORE-8). Remaining
 [MISSING] warnings below are core symbols genuinely unused by this
 package's current scope (e.g. Peppol, PDF, OAuth2/mTLS http_client
 machinery — CFDI has no Peppol or PDF/A-3 leg, and no external
@@ -44,14 +51,31 @@ from mcp_einvoicing_core.audit import (
     parse_audit_args,
     render_summary_table,
     run_check_core_coverage,
+    run_check_resource_paths,
     run_check_version_compatibility,
 )
+
+import mcp_cfdi_mx
+from mcp_cfdi_mx.tools.seal import _RESOURCES_DIR as _SEAL_RESOURCES_DIR
+from mcp_cfdi_mx.utils.tfd import _RESOURCES_DIR as _TFD_RESOURCES_DIR
+from mcp_cfdi_mx.utils.xsd_validator import _RESOURCES_DIR as _XSD_RESOURCES_DIR
 
 _PACKAGE = "mcp-cfdi-mx"
 _MODULE = "mcp_cfdi_mx"
 _ROOT = Path(__file__).resolve().parent.parent
 _PYPROJECT = _ROOT / "pyproject.toml"
 _SOURCES = _ROOT / "specs" / "README.md"
+_PACKAGE_ROOT = Path(mcp_cfdi_mx.__file__).resolve().parent
+
+# CHECK 7 configuration — every runtime resource directory this package's
+# own modules resolve at import time (CORE-1, core v1.32.0). Each entry is
+# the actual resolved Path object the running module computes, not a
+# re-derivation, so this exercises the same resolution logic as production.
+_RESOURCE_PATHS: dict[str, Path] = {
+    "mcp_cfdi_mx.tools.seal._RESOURCES_DIR": _SEAL_RESOURCES_DIR,
+    "mcp_cfdi_mx.utils.tfd._RESOURCES_DIR": _TFD_RESOURCES_DIR,
+    "mcp_cfdi_mx.utils.xsd_validator._RESOURCES_DIR": _XSD_RESOURCES_DIR,
+}
 
 # ---------------------------------------------------------------------------
 # CHECK 1 configuration — country-specific constants
@@ -191,6 +215,12 @@ def run_audit() -> AuditReport:
         )
     )
     report.checks.append(run_check_5())
+    report.checks.append(
+        run_check_resource_paths(
+            package_root=_PACKAGE_ROOT,
+            resource_paths=_RESOURCE_PATHS,
+        )
+    )
 
     return report
 

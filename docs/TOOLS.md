@@ -82,8 +82,9 @@ _No parameters._
 Seal (or deliberately not seal) a CFDI 4.0 Comprobante, PAC-agnostic.
 
 `sealing_mode="local"` computes the cadena original via the actual SAT
-XSLT transform (`specs/cadenaoriginal_4_0.xslt`, with its `utilerias.xslt`
-and `Pagos20.xslt` includes resolved from `specs/`; any other complemento
+XSLT transform (`resources/cadenaoriginal_4_0.xslt`, with its
+`utilerias.xslt` and `Pagos20.xslt` includes resolved from `resources/`;
+any other complemento
 include a document might reference is not in Phase-1 scope and stubs to
 a no-op template — see `SelloDigitalSigner`'s docstring), then computes
 `Sello`/`NoCertificado`/`Certificado` via

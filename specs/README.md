@@ -14,6 +14,16 @@ of related standards (CFDI 4.0 and its complementos), so no per-standard subdire
 is needed (contrast ES's `facturae/`/`sii/`/`verifactu/` split for genuinely distinct
 systems).
 
+## Runtime artifacts (shipped in the wheel)
+
+The XSD schemas and cadena original XSLT transforms this package actually loads at import
+time live under [`src/mcp_cfdi_mx/resources/`](../src/mcp_cfdi_mx/resources/), not here.
+Moved there 2026-09-09 (CORE-1, `audit/2026-09-audit-core.md`): the old location resolved a
+path outside the installed package once pip-installed from a wheel, since only
+`src/mcp_cfdi_mx/` is packaged. See that directory's own README for the file-by-file mapping.
+Everything remaining in this `specs/` directory is reference-only material nothing in `src/`
+reads at runtime.
+
 ## Sources and versions
 
 | Standard | Version | Authority URL | Retrieved |
@@ -35,17 +45,17 @@ memory — see `context-library/regulatory-watch/sources.md` for how these are t
 
 | File | Role | Namespace / note |
 |---|---|---|
-| `cfdv40.xsd.xml` | CFDI 4.0 root schema | `http://www.sat.gob.mx/cfd/4` |
-| `tdCFDI.xsd` | Shared simple types (RFC, importes, fechas) | `http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI` — normative RFC regex (`t_RFC`) lives here |
-| `catCFDI.xsd` | Catalogue enumerations (schema-level) | `http://www.sat.gob.mx/sitio_internet/cfd/catalogos` |
-| `catCFDI_V_4_20260821.xls` | Catalogue values workbook (all sheets, incl. `c_TasaOCuota` IVA/IEPS/ISR rates) | Code-list and rate source; parse with `xlrd` (legacy `.xls` binary format) |
-| `cadenaoriginal_4_0.xslt` | Cadena original transform for the CFDI `Sello` | Hard dependency for sealing. Declares `xsl:include` of ~35 SAT-hosted complemento fragments by absolute URL — only `utilerias.xslt` (base helper templates, load-bearing for every field) and `Pagos20.xslt` (Phase-1 Pagos 2.0 fragment) are supplied; all others are safely stubbed at compile time by `SelloDigitalSigner`'s resolver since Phase 1 never emits those complementos. |
-| `utilerias.xslt` | Base cadena original helper templates (`Requerido`/`Opcional`/`ManejaEspacios`) | Required by every attribute in `cadenaoriginal_4_0.xslt`; not a complemento-specific fragment |
-| `Pagos20.xslt` | Cadena original fragment for the Complemento de Pagos 2.0 | Required for Phase-1 Pagos CFDIs |
-| `TimbreFiscalDigitalv11.xsd.xml` | TFD 1.1 (PAC stamp) schema | `http://www.sat.gob.mx/TimbreFiscalDigital` |
-| `cadenaoriginal_TFD_1_1.xslt` | TFD cadena original transform | For verifying the PAC's stamp |
-| `Pagos20.xsd.xml` | Complemento de Pagos 2.0 schema | `http://www.sat.gob.mx/Pagos20` |
-| `catPagos.xsd.xml` | Pagos 2.0 catalogue enumerations | `http://www.sat.gob.mx/sitio_internet/cfd/catalogos/Pagos`; imported by `Pagos20.xsd` |
+| `src/mcp_cfdi_mx/resources/cfdv40.xsd.xml` | CFDI 4.0 root schema | `http://www.sat.gob.mx/cfd/4` |
+| `src/mcp_cfdi_mx/resources/tdCFDI.xsd` | Shared simple types (RFC, importes, fechas) | `http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI` — normative RFC regex (`t_RFC`) lives here |
+| `src/mcp_cfdi_mx/resources/catCFDI.xsd` | Catalogue enumerations (schema-level) | `http://www.sat.gob.mx/sitio_internet/cfd/catalogos` |
+| `catCFDI_V_4_20260821.xls` | Catalogue values workbook (all sheets, incl. `c_TasaOCuota` IVA/IEPS/ISR rates) | Code-list and rate source; parse with `xlrd` (legacy `.xls` binary format). Reference-only — not loaded at runtime, values were hand-derived into `models/invoice.py` enums |
+| `src/mcp_cfdi_mx/resources/cadenaoriginal_4_0.xslt` | Cadena original transform for the CFDI `Sello` | Hard dependency for sealing. Declares `xsl:include` of ~35 SAT-hosted complemento fragments by absolute URL — only `utilerias.xslt` (base helper templates, load-bearing for every field) and `Pagos20.xslt` (Phase-1 Pagos 2.0 fragment) are supplied; all others are safely stubbed at compile time by `SelloDigitalSigner`'s resolver since Phase 1 never emits those complementos. |
+| `src/mcp_cfdi_mx/resources/utilerias.xslt` | Base cadena original helper templates (`Requerido`/`Opcional`/`ManejaEspacios`) | Required by every attribute in `cadenaoriginal_4_0.xslt`; not a complemento-specific fragment |
+| `src/mcp_cfdi_mx/resources/Pagos20.xslt` | Cadena original fragment for the Complemento de Pagos 2.0 | Required for Phase-1 Pagos CFDIs |
+| `src/mcp_cfdi_mx/resources/TimbreFiscalDigitalv11.xsd.xml` | TFD 1.1 (PAC stamp) schema | `http://www.sat.gob.mx/TimbreFiscalDigital` |
+| `src/mcp_cfdi_mx/resources/cadenaoriginal_TFD_1_1.xslt` | TFD cadena original transform | For verifying the PAC's stamp |
+| `src/mcp_cfdi_mx/resources/Pagos20.xsd.xml` | Complemento de Pagos 2.0 schema | `http://www.sat.gob.mx/Pagos20` |
+| `src/mcp_cfdi_mx/resources/catPagos.xsd.xml` | Pagos 2.0 catalogue enumerations | `http://www.sat.gob.mx/sitio_internet/cfd/catalogos/Pagos`; imported by `Pagos20.xsd` |
 | `Anexo20_2022.pdf` | Normative CFDI 4.0 technical standard (DOF 2022-01-13) | Field semantics; sealing algorithm (§ "Generación de sellos digitales"); cadena original construction rules |
 | `Anexo_20_Guia_de_llenado_CFDI.pdf` | Fill-in guide for CFDI 4.0 | Field-level semantics beyond the structural XSD |
 | `MatrizDeErrores_CFDI_v40_20260325.xls` | Official validation/error matrix | Business-rule reference (deferred; XSD-first per BR precedent) |

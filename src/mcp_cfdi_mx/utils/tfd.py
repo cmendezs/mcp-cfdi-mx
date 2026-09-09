@@ -23,8 +23,8 @@ from pathlib import Path
 from lxml import etree
 from mcp_einvoicing_core.xml_utils import safe_fromstring
 
-_SPECS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "specs"
-_TFD_CADENA_ORIGINAL_XSLT = _SPECS_DIR / "cadenaoriginal_TFD_1_1.xslt"
+_RESOURCES_DIR = Path(__file__).resolve().parent.parent / "resources"
+_TFD_CADENA_ORIGINAL_XSLT = _RESOURCES_DIR / "cadenaoriginal_TFD_1_1.xslt"
 
 _TFD_NS = "http://www.sat.gob.mx/TimbreFiscalDigital"
 
