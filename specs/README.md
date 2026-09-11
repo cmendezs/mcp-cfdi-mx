@@ -3,9 +3,8 @@
 This directory holds the normative source material for Mexico's CFDI 4.0, Timbre Fiscal
 Digital 1.1, and Complemento de Pagos 2.0 — official schemas (XSD), cadena original
 transforms (XSLT), the Anexo 20 technical standard and fill-in guides, and SAT's catalogue
-workbooks. Values derived from these documents belong in
-[`context-library/countries/mx.md`](../../context-library/countries/mx.md) (in the workspace
-root repo), not in code and not duplicated as a new file in this directory.
+workbooks. Values derived from these documents belong in this package's own compliance
+reference, not in code and not duplicated as a new file in this directory.
 
 ## Directory layout
 
@@ -18,7 +17,7 @@ systems).
 
 The XSD schemas and cadena original XSLT transforms this package actually loads at import
 time live under [`src/mcp_cfdi_mx/resources/`](../src/mcp_cfdi_mx/resources/), not here.
-Moved there 2026-09-09 (CORE-1, `audit/2026-09-audit-core.md`): the old location resolved a
+Moved there 2026-09-09 (CORE-1): the old location resolved a
 path outside the installed package once pip-installed from a wheel, since only
 `src/mcp_cfdi_mx/` is packaged. See that directory's own README for the file-by-file mapping.
 Everything remaining in this `specs/` directory is reference-only material nothing in `src/`
@@ -38,8 +37,7 @@ reads at runtime.
 At least one row per standard listed in `pyproject.toml` is mandatory, each backed by an
 official authority URL and an actual retrieval date. The three `[NEED:]` rows above have a
 supplied local file but no independently-verified canonical URL; do not populate them from
-memory — see `context-library/regulatory-watch/sources.md` for how these are tracked as
-`manual` watch entries until a URL is confirmed.
+memory — these are tracked as `manual` watch entries internally until a URL is confirmed.
 
 ## Files
 
@@ -71,9 +69,9 @@ memory — see `context-library/regulatory-watch/sources.md` for how these are t
 |---|---|---|
 | SAT catálogos page canonical URL | `[NEED:]` | Blocks the `Sources and versions` row above from moving from `manual` to `fetch`/`search` in the regulatory watch |
 | SAT matriz de errores page canonical URL | `[NEED:]` | Same |
-| RMF vigente / Anexo 20 DOF page canonical URL | `[NEED:]` | Currently tracked `manual` in `context-library/regulatory-watch/sources.md` |
+| RMF vigente / Anexo 20 DOF page canonical URL | `[NEED:]` | Currently tracked `manual` internally |
 | CSD issuance documentation (`.cer`/`.key` container format) | `[NEED:]` | `mcp_einvoicing_core.digital_signature.SelloDigitalSigner` assumes an encrypted PKCS#8 DER `.key`, matching common third-party CFDI tooling, but no supplied SAT document confirms this — flagged `[Unverified]` in that class's docstring |
-| PAC web-service specification | `[NEED: out of Phase 1]` | Deferred; no vendor spec supplied. Tracked in `context-library/roadmap-2026.md`. |
+| PAC web-service specification | `[NEED: out of Phase 1]` | Deferred; no vendor spec supplied. |
 | Remaining ~33 cadena original `xsl:include` fragments (Carta Porte, Nómina, Comercio Exterior, etc.) | `[NEED: only if scope expands past Phase 1]` | Safely stubbed for now since their templates are never reached by a Phase-1 document |
 
 ## Non-file sources
@@ -81,5 +79,5 @@ memory — see `context-library/regulatory-watch/sources.md` for how these are t
 Not every source is a downloadable file. The three authority URLs marked "user-supplied;
 not independently fetched" above were provided by the user in chat rather than retrieved by
 an agent, per the bundled-sources-only research policy — no local file backs them beyond
-this table entry, and their content is already folded into
-`context-library/countries/mx.md`.
+this table entry, and their content is already folded into this package's own compliance
+reference.

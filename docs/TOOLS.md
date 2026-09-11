@@ -64,12 +64,11 @@ Returns a dict with:
 
 Return the CFDI document types, complementos, and sealing modes this package supports.
 
-Reflects Phase 1 scope locked in context-library/countries/mx.md
-(workspace root repo): CFDI 4.0 Ingreso + Egreso + Complemento de Pagos
+Reflects Phase 1 scope: CFDI 4.0 Ingreso + Egreso + Complemento de Pagos
 2.0, PAC-agnostic sealing. Build (`mx__build_cfdi`/`mx__build_pago`),
 XSD validation (`mx__validate_cfdi`), sealing (`mx__seal_cfdi`), and TFD
 verification (`mx__verify_tfd`) are all implemented. PAC submission
-transport and later-phase complementos are not — see roadmap-2026.md.
+transport and later-phase complementos are not.
 
 Returns:
     A `ScopeInfo` describing current scope, for callers to check before

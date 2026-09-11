@@ -134,7 +134,7 @@ See [`docs/TOOLS.md`](docs/TOOLS.md) for the full parameter reference of every t
 
 ### Not yet implemented
 
-PAC submission transport (this package is PAC-agnostic and does not submit to any specific PAC), and later-phase complementos (Carta Porte, Complemento de Nómina, Retenciones, Comercio Exterior) — tracked in `context-library/roadmap-2026.md` (workspace root repo).
+PAC submission transport (this package is PAC-agnostic and does not submit to any specific PAC), and later-phase complementos (Carta Porte, Complemento de Nómina, Retenciones, Comercio Exterior).
 
 ## Architecture
 
@@ -170,9 +170,7 @@ locally with your own CSD and hands any PAC an already-sealed document.
 | Timbre Fiscal Digital | 1.1 | SAT |
 | Complemento de Pagos | 2.0 | SAT |
 
-See [`specs/README.md`](specs/README.md) for the full source bundle and retrieval dates, and
-[`context-library/countries/mx.md`](https://github.com/cmendezs/mcp-einvoicing/blob/main/context-library/countries/mx.md)
-in the workspace root repo for the verified compliance reference.
+See [`specs/README.md`](specs/README.md) for the full source bundle and retrieval dates.
 
 ## Tests
 

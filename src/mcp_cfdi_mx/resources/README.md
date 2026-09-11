@@ -1,8 +1,8 @@
 # mcp-cfdi-mx — Runtime resources (shipped in the wheel)
 
 XSD schemas and cadena original XSLT transforms this package loads at import
-time. Moved here from the repo-root `specs/` directory 2026-09-09 (CORE-1,
-`audit/2026-09-audit-core.md`): the previous location resolved a path outside
+time. Moved here from the repo-root `specs/` directory 2026-09-09 (CORE-1): the previous
+location resolved a path outside
 the installed package once pip-installed from a wheel, since only
 `src/mcp_cfdi_mx/` is packaged (`[tool.hatch.build.targets.wheel]` in
 `pyproject.toml`). `specs/` (repo root) still holds the reference-only

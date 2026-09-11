@@ -1,7 +1,7 @@
 """Complemento de Pagos 2.0 models (`Pagos20.xsd.xml`, namespace ``http://www.sat.gob.mx/Pagos20``).
 
 Phase 1 scope. Field names and cardinality traced directly to the supplied
-``Pagos20.xsd.xml`` — see context-library/countries/mx.md (workspace root repo).
+``Pagos20.xsd.xml`` — see the package's own compliance reference.
 This complement attaches to a `CFDIComprobante` with
 `tipo_de_comprobante=TipoDeComprobante.PAGO` via
 `CFDIComprobante`'s `Complemento` node — not modeled as a Pydantic field on

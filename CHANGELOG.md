@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0] - 2026-09-09
 
-Step 3 (country wave 1), item 1 of the core audit's execution ladder
-(`audit/2026-09-audit-core.md`) — the highest-severity item in the wave.
+Step 3 (country wave 1), item 1 of the core audit's execution ladder — the
+highest-severity item in the wave.
 
 ### Fixed
 - **CORE-1 (BLOCKING)** — Runtime XSD/XSLT resources moved from repo-root
@@ -53,8 +53,8 @@ Step 3 (country wave 1), item 1 of the core audit's execution ladder
 
 ## [0.3.0] - 2026-09-03
 
-Remediates the findings from the first Mexico country audit
-(`audit/2026-09-audit-mx.md`, v0.2.0). Every fix narrows a model/tool rule that
+Remediates the findings from the first Mexico country audit (v0.2.0).
+Every fix narrows a model/tool rule that
 previously allowed the tools to silently emit XSD-invalid or PAC-rejected
 output; existing valid input is unaffected.
 
@@ -77,15 +77,14 @@ output; existing valid input is unaffected.
   `uso_cfdi="S01"` (Pago CFDIs are exempt, since `UsoCFDI` is unconditionally
   `"CP01"` there). Verified directly against `Anexo20_2022.pdf` and
   `Anexo_20_Guia_de_llenado_CFDI.pdf` during remediation — both generic RFCs
-  pair with regimen `616` (corrects a prior `context-library/countries/mx.md`
-  note that had claimed `610` for `XEXX010101000`, which does not appear in
-  either source document).
+  pair with regimen `616` (corrects a prior internal note that had claimed
+  `610` for `XEXX010101000`, which does not appear in either source document).
 - **MX-SC-4** — `PagoDoctoRelacionado` now enforces
   `ImpSaldoAnt == ImpPagado + ImpSaldoInsoluto` (exact `Decimal` comparison),
   per `Guia_llenado_pagos.pdf`'s `ImpSaldoInsoluto` field rule.
 
 ### Fixed
-- **MX-DOC-1** — no code change; `context-library/countries/mx.md`'s
+- **MX-DOC-1** — no code change; the internal compliance reference's
   `c_Impuesto` catalogue table was corrected from its display-column form
   (`1`/`2`/`3`) to the XSD emission form (`001`/`002`/`003`), matching what
   `ConceptoImpuesto`'s docstring already documented correctly.
@@ -123,4 +122,4 @@ output; existing valid input is unaffected.
 - `mx__get_supported_scope` MCP tool.
 - Not yet implemented: CFDI generation/validation/sealing/TFD-verification tools
   (`mx__build_cfdi`, `mx__build_pago`, `mx__validate_cfdi`, `mx__seal_cfdi`,
-  `mx__verify_tfd`) — tracked in `context-library/roadmap-2026.md`.
+  `mx__verify_tfd`).

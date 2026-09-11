@@ -134,7 +134,7 @@ Ver [`docs/TOOLS.md`](docs/TOOLS.md) para la referencia completa de parámetros 
 
 ### Aún no implementado
 
-El transporte de envío al PAC (este paquete es agnóstico al PAC y no envía a ningún PAC específico), y los complementos de fases posteriores (Carta Porte, Complemento de Nómina, Retenciones, Comercio Exterior) — rastreados en `context-library/roadmap-2026.md` (repositorio raíz del workspace).
+El transporte de envío al PAC (este paquete es agnóstico al PAC y no envía a ningún PAC específico), y los complementos de fases posteriores (Carta Porte, Complemento de Nómina, Retenciones, Comercio Exterior).
 
 ## Arquitectura
 
@@ -170,9 +170,7 @@ localmente con tu propio CSD y entrega a cualquier PAC un documento ya sellado.
 | Timbre Fiscal Digital | 1.1 | SAT |
 | Complemento de Pagos | 2.0 | SAT |
 
-Ver [`specs/README.md`](specs/README.md) para el paquete completo de fuentes y sus fechas de obtención, y
-[`context-library/countries/mx.md`](https://github.com/cmendezs/mcp-einvoicing/blob/main/context-library/countries/mx.md)
-en el repositorio raíz del workspace para la referencia de cumplimiento verificada.
+Ver [`specs/README.md`](specs/README.md) para el paquete completo de fuentes y sus fechas de obtención.
 
 ## Pruebas
 

@@ -31,8 +31,8 @@ CHECK 7 below guards against that regressing. Scope introspection
 package's current scope (e.g. Peppol, PDF, OAuth2/mTLS http_client
 machinery — CFDI has no Peppol or PDF/A-3 leg, and no external
 authenticated HTTP client yet) — real future-scope gaps, not overridden.
-See roadmap-2026.md for what remains (PAC transport, later-phase
-complementos, catalogue cross-validation design decision).
+What remains (PAC transport, later-phase complementos, catalogue
+cross-validation design decision) is tracked internally.
 """
 
 from __future__ import annotations
@@ -83,7 +83,7 @@ _RESOURCE_PATHS: dict[str, Path] = {
 
 # CFDI 4.0 predates and has no EN 16931 lineage — non-EN16931 pathway,
 # CFDIComprobante extends InvoiceDocument. Same determination as mcp-nfe-br.
-# See context-library/countries/mx.md "Invoice-tree pathway".
+# See the package's own compliance reference, "Invoice-tree pathway".
 _IS_EN16931_FAMILY: bool = False
 _PRIMARY_INVOICE_CLASS: tuple[str, str] = ("mcp_cfdi_mx.models.invoice", "CFDIComprobante")
 

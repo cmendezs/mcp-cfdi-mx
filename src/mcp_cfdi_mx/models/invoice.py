@@ -7,13 +7,13 @@ before it is legally valid. `mcp-cfdi-mx` therefore follows the non-EN16931 path
 as `mcp-nfe-br`'s `BRInvoice`.
 
 Field-level structure and every namespace/format constraint cited here is traced to
-the supplied SAT spec bundle under ``specs/`` — see
-context-library/countries/mx.md (workspace root repo) for the verified reference,
-including source citations for every value below.
+the supplied SAT spec bundle under ``specs/`` — see the package's own
+compliance reference for the verified reference, including source citations
+for every value below.
 
 Phase 1 scope only: CFDI 4.0 Ingreso + Egreso + Complemento de Pagos 2.0. Fields for
 out-of-scope complementos (Carta Porte, Nómina, Comercio Exterior, Retenciones) are not
-modeled — see mx.md "Known gaps and open items" and roadmap-2026.md.
+modeled — see the package's own compliance reference, "Known gaps and open items".
 
 Unlike ``mcp-nfe-br``'s ``BRInvoice`` (which adds parallel ``emitente``/``destinatario``
 fields alongside the inherited, unused ``seller``/``buyer``), this model narrows

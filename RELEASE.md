@@ -5,7 +5,7 @@ This document describes how to release a new version of `mcp-cfdi-mx` to PyPI an
 ## One-Time Setup Requirements
 
 **PyPI Trusted Publishing:**
-PyPI publishing is fully automated via OIDC (no token stored). The Trusted Publisher must be configured on PyPI under `cmendezs/mcp-cfdi-mx`, workflow `publish.yml`, environment `pypi`, **before the first release tag is pushed** — see [Step 5 of the create-country skill](../.claude/skills/create-country/SKILL.md). No `.env` or secret needed.
+PyPI publishing is fully automated via OIDC (no token stored). The Trusted Publisher must be configured on PyPI under `cmendezs/mcp-cfdi-mx`, workflow `publish.yml`, environment `pypi`, **before the first release tag is pushed**. No `.env` or secret needed.
 
 **MCP Publisher CLI:**
 Binary installed at `~/.local/bin/mcp-publisher` (already in `PATH`). To update:
@@ -54,11 +54,9 @@ those entries under the new version heading.
 - PyPI rejects re-uploads of the same version — always bump before tagging.
 - Published v0.2.0 (2026-09-02) — first release, live on PyPI and the MCP registry. Phase 1
   tools (build/validate/seal/verify-TFD) are implemented and tested; PAC submission transport
-  and later-phase complementos remain out of scope — see `CHANGELOG.md` and
-  `context-library/roadmap-2026.md`.
+  and later-phase complementos remain out of scope — see `CHANGELOG.md`.
 - Published v0.3.0 (2026-09-03) — first-audit remediation (MX-SC-1/2/3/4, MX-DOC-1, MX-TC-1,
-  MX-SH-1), live on PyPI and the MCP registry. See `CHANGELOG.md` and
-  `context-library/audit-history.md` "MX country audit — finding tracker".
+  MX-SH-1), live on PyPI and the MCP registry. See `CHANGELOG.md`.
 - Published v0.4.0 (2026-09-09) — core audit Step 3 item 1 (CORE-1 BLOCKING packaging fix,
   CORE-7 resolver-hook delegation, CORE-8 scope descriptor), live on PyPI and the MCP
-  registry. See `CHANGELOG.md` and `audit/2026-09-audit-core.md`.
+  registry. See `CHANGELOG.md`.
