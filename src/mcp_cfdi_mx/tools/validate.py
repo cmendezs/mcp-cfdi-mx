@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from lxml import etree
+from mcp_einvoicing_core.schematron import BaseXSDValidator
 from mcp_einvoicing_core.xml_utils import safe_fromstring
 
 from mcp_cfdi_mx.utils.xsd_validator import (
@@ -60,6 +61,7 @@ def mx__validate_cfdi(
     # A Comprobante carrying a Complemento must be validated with that
     # complement's schema loaded too (Complemento's xs:any wildcard is
     # strict) — see xsd_validator.cfdi_validator()'s docstring.
+    comprobante_validator: BaseXSDValidator
     if tfd_el is not None or pagos_el is not None:
         comprobante_validator = full_validator(
             include_tfd=tfd_el is not None, include_pagos=pagos_el is not None
