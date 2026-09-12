@@ -223,9 +223,7 @@ def run_audit() -> AuditReport:
         )
     )
 
-    report.checks.append(
-        run_check_no_internal_references(repo_root=_ROOT)
-    )
+    report.checks.append(run_check_no_internal_references(repo_root=_ROOT))
 
     return report
 
